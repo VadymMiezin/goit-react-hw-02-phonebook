@@ -13,8 +13,6 @@ export class App extends Component {
       { id: 'id-4', name: 'Annie Copeland', number: '227-91-26' },
     ],
     filter: '',
-    name: '',
-    number: '',
   };
 
   handleChange = e => {
@@ -22,19 +20,33 @@ export class App extends Component {
     this.setState({ [name]: value });
   };
 
-  handleSubmit = e => {
-    const id = nanoid();
-    const name = e.name;
-    const number = e.number;
-    const contactsLists = [...this.state.contacts];
+  // handleSubmit = e => {
+  //   const id = nanoid();
+  //   const name = e.name;
+  //   const number = e.number;
+  //   const contactsLists = [...this.state.contacts];
 
-    if (contactsLists.findIndex(contact => name === contact.name) !== -1) {
-      alert(`${name} is already in contacts.`);
-    } else {
-      contactsLists.push({ name, id, number });
+  //   if (contactsLists.findIndex(contact => name === contact.name) !== -1) {
+  //     alert(`${name} is already in contacts.`);
+  //   } else {
+  //     contactsLists.push({ name, id, number });
+  //   }
+
+  //   this.setState({ contacts: contactsLists });
+  // };
+
+  handleSubmit = contact => {
+    const isInContacts = this.state.contacts.find(
+      ({ name }) => name.toLowerCase() === contact.name.toLowerCase()
+    );
+
+    if (isInContacts) {
+      alert(`${contact.name} is already in contacts`);
+      return;
     }
-
-    this.setState({ contacts: contactsLists });
+    this.setState(prevState => ({
+      contacts: [{ id: nanoid(), ...contact }, ...prevState.contacts],
+    }));
   };
 
   handleDelete = e => {
@@ -44,13 +56,11 @@ export class App extends Component {
   };
 
   getFilteredContacts = () => {
-    const filterContactsList = this.state.contacts.filter(contact => {
+    return this.state.contacts.filter(contact => {
       return contact.name
         .toLowerCase()
         .includes(this.state.filter.toLowerCase());
     });
-
-    return filterContactsList;
   };
 
   render() {
